@@ -47,6 +47,8 @@ class SlackReporter implements Reporter {
 
   private suite!: Suite;
 
+  private omitDetails: boolean
+
   logs: string[] = [];
 
   onBegin(fullConfig: FullConfig, suite: Suite): void {
@@ -84,6 +86,7 @@ class SlackReporter implements Reporter {
       this.showInThread = slackReporterConfig.showInThread || false;
       this.slackLogLevel = slackReporterConfig.slackLogLevel || LogLevel.DEBUG;
       this.proxy = slackReporterConfig.proxy || undefined;
+      this.omitDetails = slackReporterConfig.omitDetails || false;
     }
     this.resultsParser = new ResultsParser();
   }
@@ -161,11 +164,12 @@ class SlackReporter implements Reporter {
           disableUnfurl: this.disableUnfurl,
           summaryResults: resultSummary,
           showInThread: this.showInThread,
+          omitDetails: this.omitDetails
         },
       });
       // eslint-disable-next-line no-console
       console.log(JSON.stringify(result, null, 2));
-      if (this.showInThread && resultSummary.failures.length > 0) {
+      if (!this.omitDetails && this.showInThread && resultSummary.failures.length > 0) {
         for (let i = 0; i < result.length; i += 1) {
           // eslint-disable-next-line no-await-in-loop
           await slackClient.attachDetailsToThread({

@@ -39,6 +39,7 @@ export default class SlackClient {
       disableUnfurl?: boolean;
       summaryResults: SummaryResults;
       showInThread: boolean;
+      omitDetails?: boolean;
     };
   }): Promise<Array<{ channel: string; outcome: string; ts: string }>> {
     let blocks: (Block | KnownBlock)[];
@@ -46,7 +47,7 @@ export default class SlackClient {
       blocks = options.customLayout(options.summaryResults);
     } else if (options.customLayoutAsync) {
       blocks = await options.customLayoutAsync(options.summaryResults);
-    } else if (options.showInThread) {
+    } else if (options.showInThread || options.omitDetails) {
       const modifiedOptions = JSON.parse(JSON.stringify(options));
       modifiedOptions.summaryResults.failures = [];
       blocks = await generateBlocks(

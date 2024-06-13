@@ -71,7 +71,7 @@ export interface Metadata {
 
 export interface ReportSlowTests {
   max: number;
-  threshold: number;
+  layshold: number;
 }
 
 export interface Project {
